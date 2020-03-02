@@ -5,46 +5,46 @@
         <b-col></b-col>
         <b-col cols="8">
           <div class="card">
-            <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-              
-              <b-form-group id="input-group-1" label="Your Name:" label-for="input-1">
-                <b-form-input ref="userName" v-model="form.name" required placeholder="Enter name"></b-form-input>
+            <b-form @submit="onSubmit" @reset="onReset">
+              <b-form-group label="ชื่ออาหาร: " label-for="food-name">
+                <b-form-input ref="name" v-model="form.name" required placeholder="Enter Name food.."></b-form-input>
               </b-form-group>
 
-              <b-form-group id="input-group-2" label="Email address:" label-for="input-2">
+              <b-form-group label="วัตถุดิบ: " label-for="ingredient">
                 <b-form-input
-                  ref="userEmail"
-                  v-model="form.email"
-                  type="email"
+                  ref="ingredient"
+                  v-model="form.ingredient"
+                  type="text"
                   required
-                  placeholder="Enter email"
+                  placeholder="Enter ingredient.."
                 ></b-form-input>
               </b-form-group>
 
-              <b-form-group id="input-group-2" label="Email address:" label-for="input-2">
+              <b-form-group label="โดย: " label-for="by">
                 <b-form-input
-                  ref="userEmail"
-                  v-model="form.email"
-                  type="email"
+                  ref="by"
+                  v-model="form.by"
+                  type="text"
                   required
-                  placeholder="Enter email"
+                  placeholder="Enter By.."
                 ></b-form-input>
               </b-form-group>
 
-
-              <b-form-group id="input-group-2" label="Email address:" label-for="input-2">
-                <b-form-input
-                  ref="userEmail"
-                  v-model="form.email"
-                  type="email"
-                  required
-                  placeholder="Enter email"
-                ></b-form-input>
+              <b-form-group label="สูตร: " label-for="formula">
+                <b-form-textarea
+                  v-model="form.formula"
+                  placeholder="Enter formula..."
+                  rows="3"
+                  max-rows="6"
+                ></b-form-textarea>
               </b-form-group>
 
+              <b-form-group label="รูป: " label-for="img">
+                <input type="file" ref="img"/>
+              </b-form-group>
 
-              <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
-              <b-button type="reset" variant="danger" class="float-left">Reset</b-button>
+              <b-button type="submit" variant="success" class="float-right">เพิ่ม</b-button>
+              <b-button type="reset" variant="danger" class="float-left">ล้าง</b-button>
             </b-form>
           </div>
 
@@ -71,10 +71,11 @@ export default {
   },
   data() {
     return {
-      show: true,
       form: {
         name: "",
-        email: ""
+        ingredient: "",
+        by: "",
+        formula: ""
       }
     };
   },
@@ -82,18 +83,18 @@ export default {
     onSubmit(evt) {
       evt.preventDefault();
       //alert(JSON.stringify(this.form))
-      let data = this.form;
-      let option = [
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      ];
-      axios.post("http://127.0.0.1:3000/api/foods", data, option).then(res => {
+      
+      let fd = new FormData();
+      fd.append("f_name", this.form.name);
+      fd.append("f_ingredient", this.form.ingredient);
+      fd.append("f_formula", this.form.formula);
+      fd.append("f_by", this.form.by);
+      fd.append("f_img", this.$refs.img.files[0]);
+
+      axios.post("http://127.0.0.1:3000/api/foods", fd).then(res => {
         //this.$refs.showAlert.showAlert();
-        console.log(res.data);
-        
+        this.$refs.userTable.foods = res.data;
+
         this.resetForm();
       });
     },
@@ -103,12 +104,11 @@ export default {
       this.resetForm();
     },
     resetForm() {
-      this.form.email = "";
       this.form.name = "";
-      this.show = false;
-      this.$nextTick(() => {
-        this.show = true;
-      });
+      this.form.ingredient = "";
+      this.form.by = "";
+      this.form.formula = "";
+      this.$refs.img.values = "";
     }
   }
 };
@@ -118,5 +118,6 @@ export default {
 .card {
   margin-bottom: 20px;
   border-color: transparent;
+  text-align: start
 }
 </style>

@@ -2,16 +2,40 @@
   <b-modal id="modalEdit" :title="title" hide-footer>
     <div>
       <b-form>
-        <b-form-group id="input-group-1" label="Your Name:" label-for="input-1">
-          <b-form-input required placeholder="Enter name" :value="user[0].name"></b-form-input>
+        <b-form-group label="ชื่ออาหาร: " label-for="food-name">
+          <b-form-input ref="name" v-model="form.f_name" required placeholder="Enter Name food.."></b-form-input>
         </b-form-group>
 
-        <b-form-group id="input-group-2" label="Email address:" label-for="input-2">
-          <b-form-input type="email" required placeholder="Enter email" :value="user[0].email"></b-form-input>
+        <b-form-group label="วัตถุดิบ: " label-for="ingredient">
+          <b-form-input
+            ref="ingredient"
+            v-model="form.f_ingredient"
+            type="text"
+            required
+            placeholder="Enter ingredient.."
+          ></b-form-input>
         </b-form-group>
 
-        <b-button type="submit" variant="primary" class="float-right">Submit</b-button>
-        <b-button type="reset" variant="danger" class="float-left">Reset</b-button>
+        <b-form-group label="โดย: " label-for="by">
+          <b-form-input
+            ref="by"
+            v-model="form.f_by"
+            type="text"
+            required
+            placeholder="Enter By.."
+          ></b-form-input>
+        </b-form-group>
+
+        <b-form-group label="สูตร: " label-for="formula">
+          <b-form-textarea
+            v-model="form.f_formula"
+            placeholder="Enter formula..."
+            rows="3"
+            max-rows="6"
+          ></b-form-textarea>
+        </b-form-group>
+
+        <b-button type="submit" variant="success" class="float-right" @click="update">แก้ไข</b-button>
       </b-form>
     </div>
   </b-modal>
@@ -25,19 +49,37 @@ export default {
   data() {
     return {
       title: "",
-      user: [{}]    //json empty
+      form: {
+        f_id: "",
+        f_name: "",
+        f_ingredient: "",
+        f_by: "",
+        f_formula: ""
+      }
     };
+  },
+  props: {
+    loadData: Function
   },
   methods: {
     showModalEdit(id) {
-      axios.get(`http://127.0.0.1:3000/api/user/${id}`).then(response => {
-        this.user = response.data;
-        console.log(JSON.stringify(this.user));
+      axios.get(`http://127.0.0.1:3000/api/food/${id}`).then(response => {
+        this.form = response.data[0];
+        
         this.$bvModal.show("modalEdit");
-        this.title = `UPDATING ID: ${this.user[0].id}`;
+        this.title = `UPDATING ID: ${this.form.f_id}`;
+      });
+    },
+    update(e) {
+      e.preventDefault();
+      
+      axios.put(`http://127.0.0.1:3000/api/food/${this.form.f_id}`, this.form).then(response => {
+        
+        // console.log(response.data);
+        this.$props.loadData(response.data);
+        this.$bvModal.hide("modalEdit");
       });
     }
   },
-  mounted() {}
 };
 </script>

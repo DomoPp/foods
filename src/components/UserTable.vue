@@ -11,17 +11,17 @@
       </thead>
       <tbody>
         <tr v-for="(food, index) in foods" v-bind:key="index">
-          <td>{{index + 1}}</td>
+          <td>{{food.f_id}}</td>
           <td>
-            <router-link :to="`/api/${food.fId}`">{{food.fName}}</router-link>
+            <router-link :to="`/api/${food.f_id}`">{{food.f_name}}</router-link>
           </td>
           <td>
-            <b-link @click="edit(user.id)">
+            <b-link @click="edit(food.f_id)">
               <b-icon icon="pencil"></b-icon>
             </b-link>
           </td>
           <td>
-            <b-link @click="del(user.id)">
+            <b-link @click="del(food.f_id)">
               <b-icon icon="trash"></b-icon>
             </b-link>
           </td>
@@ -29,7 +29,7 @@
       </tbody>
     </table>
 
-    <modalEdit ref="modalEdit" />
+    <modalEdit ref="modalEdit" :loadData="loadData" />
   </div>
 </template>
 
@@ -55,10 +55,11 @@ export default {
         })
         .then(value => {
           if (value) {
-            axios.delete(`http://127.0.0.1:3000/api/user/${id}`);
-            //update table
-            this.users = this.users.filter(user => user.id != id);
-            //this.$refs.showAlert.showAlert();
+            axios.delete(`http://127.0.0.1:3000/api/food/${id}`)
+            .then(res => {
+              // console.log(res.data);
+              this.foods = res.data;
+            });
           }
         })
         .catch(err => {
@@ -67,6 +68,9 @@ export default {
     },
     edit(id) {
       this.$refs.modalEdit.showModalEdit(id);
+    },
+    loadData(data){
+      this.foods = data;
     }
   },
   mounted() {
