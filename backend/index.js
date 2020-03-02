@@ -111,8 +111,31 @@ app.route("/api/food/:id")
     }, getDataAll);
 
 
+app.route("/api/comment/:id")
+    .get(getComment)
+    .post((req, res) => {
+        let sql = ' INSERT INTO tb_comment SET ? ';
+        db.query(sql, req.body, (error, results) => {
+            if (error) return res.status(500).json({
+                "status": 500,
+                "message": "Internal Server Error" // error.sqlMessage
+            });
+            res.json(results);
+        });
+    })
+
 function getDataAll(req, res){
     db.query("SELECT * FROM tb_foods", (error, result) => {
+        if (error) return res.status(500).json({
+            "status": 500,
+            "message": "Internal Server Error" // error.sqlMessage
+        })
+        return res.json(result);
+    })
+}
+
+function getComment(req, res){
+    db.query("SELECT * FROM tb_comment WHERE c_food = ? ORDER BY c_id DESC", [req.params.id], (error, result) => {
         if (error) return res.status(500).json({
             "status": 500,
             "message": "Internal Server Error" // error.sqlMessage

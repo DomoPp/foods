@@ -8,3 +8,12 @@
     f_by TEXT NOT NULL,
     f_img VARCHAR(2500) NOT NULL DEFAULT "/system.jpg"
 );
+
+CREATE TABLE tb_comment (
+    c_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    c_name VARCHAR(50) NOT NULL,
+    c_detail VARCHAR(250) NOT NULL,
+    c_date DATETIME DEFAULT NOW(),
+    c_food INT NOT NULL,
+    FOREIGN KEY (c_food) REFERENCES tb_foods(f_id) on update cascade on delete cascade
+);

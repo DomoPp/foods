@@ -49,6 +49,13 @@
           </div>
 
           <!-- <showAlert ref="showAlert" /> -->
+          <b-form-input
+            class="mt-3 mb-3"
+            type="text"
+            required
+            placeholder="Search"
+            @change="search"
+          ></b-form-input>
 
           <div class="card-header">User List</div>
           <div class="card-body">
@@ -109,6 +116,26 @@ export default {
       this.form.by = "";
       this.form.formula = "";
       this.$refs.img.values = "";
+    },
+    search(e) {
+        console.log(e);
+      
+        // if (e !== "*" && e !== "") {
+        //     const x = this.state.depositData.filter(n => {
+        //         const regex = new RegExp(`${this.searchTxt.value}`);
+        //         return regex.test(n.p_name);
+        //     });
+        //     this.setState({ depositData: x });
+        // }else{
+        //     let x;
+        //     if(this.state.categoryType === "0"){
+        //         x = this.state.data;
+        //     }else{
+        //         x = this.state.data.filter(n => this.state.categoryType === n.c_id.toString());
+        //     }
+        //     this.setState({ depositData: x });
+        // }
+      
     }
   }
 };
