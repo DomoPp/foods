@@ -7,7 +7,12 @@
           <div class="card">
             <b-form @submit="onSubmit" @reset="onReset">
               <b-form-group label="ชื่ออาหาร: " label-for="food-name">
-                <b-form-input ref="name" v-model="form.name" required placeholder="Enter Name food.."></b-form-input>
+                <b-form-input
+                  ref="name"
+                  v-model="form.name"
+                  required
+                  placeholder="Enter Name food.."
+                ></b-form-input>
               </b-form-group>
 
               <b-form-group label="วัตถุดิบ: " label-for="ingredient">
@@ -40,7 +45,7 @@
               </b-form-group>
 
               <b-form-group label="รูป: " label-for="img">
-                <input type="file" ref="img"/>
+                <input type="file" ref="img" />
               </b-form-group>
 
               <b-button type="submit" variant="success" class="float-right">เพิ่ม</b-button>
@@ -90,7 +95,7 @@ export default {
     onSubmit(evt) {
       evt.preventDefault();
       //alert(JSON.stringify(this.form))
-      
+
       let fd = new FormData();
       fd.append("f_name", this.form.name);
       fd.append("f_ingredient", this.form.ingredient);
@@ -117,25 +122,24 @@ export default {
       this.form.formula = "";
       this.$refs.img.values = "";
     },
-    search(e) {
-        console.log(e);
-      
-        // if (e !== "*" && e !== "") {
-        //     const x = this.state.depositData.filter(n => {
-        //         const regex = new RegExp(`${this.searchTxt.value}`);
-        //         return regex.test(n.p_name);
-        //     });
-        //     this.setState({ depositData: x });
-        // }else{
-        //     let x;
-        //     if(this.state.categoryType === "0"){
-        //         x = this.state.data;
-        //     }else{
-        //         x = this.state.data.filter(n => this.state.categoryType === n.c_id.toString());
-        //     }
-        //     this.setState({ depositData: x });
-        // }
-      
+    async search(e) {
+      let data = [];
+      await axios.get("http://127.0.0.1:3000/api/foods").then(response => {
+        data = response.data;
+      });
+
+      if (e !== "*" && e !== "") {
+        const x = data.filter(n => {
+          const regex = new RegExp(`${e}`);
+          return regex.test(n.f_name);
+        });
+        // console.log(x);
+        this.$refs.userTable.foods = x;
+      } else {
+        await axios.get("http://127.0.0.1:3000/api/foods").then(response => {
+          this.$refs.userTable.foods = response.data;
+        });
+      }
     }
   }
 };
@@ -145,6 +149,6 @@ export default {
 .card {
   margin-bottom: 20px;
   border-color: transparent;
-  text-align: start
+  text-align: start;
 }
 </style>
